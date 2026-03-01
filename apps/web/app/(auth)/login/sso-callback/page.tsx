@@ -2,6 +2,9 @@
 
 import { AuthenticateWithRedirectCallback } from "@clerk/nextjs";
 
+// Force dynamic rendering to avoid prerendering with missing Clerk keys
+export const dynamic = "force-dynamic";
+
 export default function SSOCallbackPage() {
   return (
     <div className="min-h-[100dvh] flex items-center justify-center bg-black/90">
