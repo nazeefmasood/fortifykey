@@ -67,22 +67,18 @@ export default function LoginPage() {
   ];
 
   return (
-    <div className="relative w-full min-h-[100dvh] overflow-hidden">
-      {/* Background image + gradient overlay */}
+    <div className="relative w-full min-h-[100dvh] overflow-hidden bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+      {/* Animated gradient overlay */}
       <div
-        className="absolute inset-0 bg-cover bg-center"
-        style={{
-          backgroundImage: "url('/images/login-bg.jpg')",
-          filter: "blur(5px)",
-        }}
-      />
-      <div
-        className="absolute inset-0"
+        className="absolute inset-0 opacity-80"
         style={{
           background:
-            "linear-gradient(to bottom, rgba(0,0,0,0.7), rgba(67,24,255,0.6))",
+            "linear-gradient(135deg, rgba(0,0,0,0.7) 0%, rgba(67,24,255,0.5) 50%, rgba(0,0,0,0.7) 100%)",
         }}
       />
+      {/* Decorative circles */}
+      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl" />
+      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl" />
 
       {/* Content */}
       <div

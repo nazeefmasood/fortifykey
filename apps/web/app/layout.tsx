@@ -22,8 +22,8 @@ export const metadata: Metadata = {
     "A secure, cross-platform password manager with end-to-end encryption.",
   manifest: "/manifest.json",
   icons: {
-    icon: "/favicon.ico",
-    apple: "/icons/icon-192.png",
+    icon: "/favicon.svg",
+    apple: "/icons/icon-192.svg",
   },
 };
 
