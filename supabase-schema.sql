@@ -8,8 +8,9 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE TABLE IF NOT EXISTS user_keys (
   id                   uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id              text UNIQUE NOT NULL,  -- Clerk user ID
-  encrypted_vault_key  jsonb NOT NULL,         -- vault key encrypted with master key
-  key_salt             text NOT NULL,           -- PBKDF2 salt (base64)
+  master_password_hash text,                   -- bcrypt hash for server-side verification
+  encrypted_vault_key  jsonb,                   -- vault key encrypted with master key (nullable until setup complete)
+  key_salt             text,                    -- PBKDF2 salt (base64) (nullable until setup complete)
   key_iterations       integer DEFAULT 600000,
   password_hint        text,
   created_at           timestamptz DEFAULT now()

@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+/* Tell Tailwind v4 where to find class names */
+@source "../components/**/*.{js,ts,jsx,tsx}";
+@source "../app/**/*.{js,ts,jsx,tsx}";
+@source "../stores/**/*.{js,ts,jsx,tsx}";
+@source "../hooks/**/*.{js,ts,jsx,tsx}";
+
 /* ===== FortifyKey Theme ===== */
 @theme {
   /* Primary screen backgrounds */
