@@ -14,6 +14,7 @@ import {
   fromBase64,
 } from "@fortifykey/shared";
 import { useMasterKeyStore } from "../../../stores/master-key";
+import { useActivityLog } from "../../../stores/activity-log";
 
 export default function LockPage() {
   const [masterPassword, setMasterPassword] = useState("");
@@ -30,6 +31,7 @@ export default function LockPage() {
   const router = useRouter();
   const setVaultKey = useMasterKeyStore((s) => s.setVaultKey);
   const isUnlocked = useMasterKeyStore((s) => s.isUnlocked);
+  const { log } = useActivityLog();
 
   // If already unlocked, go to dashboard
   useEffect(() => {
@@ -124,7 +126,15 @@ export default function LockPage() {
       // 6. Store vault key in memory
       setVaultKey(vaultKey);
 
-      // 7. Navigate to dashboard
+      // 7. Log the setup
+      log("vault_unlocked", "Vault created and unlocked");
+
+      // 8. Notify Electron main process
+      if (typeof window !== "undefined" && window.fortifykeyDesktop) {
+        await window.fortifykeyDesktop.vault.notifyUnlocked();
+      }
+
+      // 9. Navigate to dashboard
       router.push("/dashboard");
     } catch (err) {
       console.error("Setup error:", err);
@@ -172,7 +182,15 @@ export default function LockPage() {
       // 4. Store vault key in memory
       setVaultKey(vaultKey);
 
-      // 5. Navigate to dashboard
+      // 5. Log the unlock
+      log("vault_unlocked", "Vault unlocked with master password");
+
+      // 6. Notify Electron main process
+      if (typeof window !== "undefined" && window.fortifykeyDesktop) {
+        await window.fortifykeyDesktop.vault.notifyUnlocked();
+      }
+
+      // 7. Navigate to dashboard
       router.push("/dashboard");
     } catch (err) {
       console.error("Unlock error:", err);

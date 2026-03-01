@@ -4,9 +4,13 @@ import { useState, useMemo } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { PlusCircle, Shield } from "lucide-react";
+import { toast } from "sonner";
+import { motion } from "framer-motion";
 import { PasswordCard } from "../../../components/cards/PasswordCard";
 import { useVaultItems } from "../../../hooks/useVaultItems";
 import { useCategories } from "../../../hooks/useCategories";
+import { DashboardSkeleton, VaultItemSkeleton } from "../../../components/ui/Skeleton";
+import { StaggerContainer, StaggerItem } from "../../../components/ui/PageTransition";
 import type { PasswordStrengthLabel, LoginPayload } from "@fortifykey/shared";
 
 function getStrengthLabel(score: number | null): PasswordStrengthLabel {
@@ -45,11 +49,33 @@ export default function DashboardPage() {
     return { total, strong, medium, weak };
   }, [items]);
 
+  const handleCopyPassword = async (item: typeof items[0]) => {
+    const loginData = item.item_type === "login" ? (item.data as LoginPayload) : null;
+    if (loginData?.password) {
+      await navigator.clipboard.writeText(loginData.password);
+      toast.success("Password copied to clipboard");
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-full bg-fk-blue">
+        <div className="max-w-4xl mx-auto px-4 md:px-8 py-6">
+          <DashboardSkeleton />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-full bg-fk-blue">
       <div className="max-w-4xl mx-auto px-4 md:px-8 py-6">
         {/* Header bar (mobile only) */}
-        <div className="flex items-center justify-between md:hidden mb-6">
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex items-center justify-between md:hidden mb-6"
+        >
           <div className="flex items-center">
             <div className="w-[50px] h-[50px] bg-white rounded-full flex items-center justify-center">
               <Shield size={24} className="text-fk-blue" />
@@ -65,19 +91,29 @@ export default function DashboardPage() {
             <PlusCircle size={16} />
             New item
           </Link>
-        </div>
+        </motion.div>
 
         {/* Hero text */}
-        <h1 className="text-white text-6xl md:text-8xl font-semibold leading-[0.95] mb-8">
+        <motion.h1
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="text-white text-6xl md:text-8xl font-semibold leading-[0.95] mb-8"
+        >
           Keep
           <br />
           Your Life
           <br />
           Safe
-        </h1>
+        </motion.h1>
 
         {/* Category pills */}
-        <div className="flex gap-3 mb-8 overflow-x-auto pb-2 scrollbar-none">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="flex gap-3 mb-8 overflow-x-auto pb-2 scrollbar-none"
+        >
           {categoryNames.map((cat) => (
             <button
               key={cat}
@@ -94,10 +130,15 @@ export default function DashboardPage() {
           <button className="px-5 py-2.5 rounded-full text-sm font-medium text-white border border-black">
             +
           </button>
-        </div>
+        </motion.div>
 
         {/* Stats section */}
-        <div className="flex gap-6 mb-8">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="flex gap-6 mb-8"
+        >
           <div>
             <p className="text-white text-6xl font-bold">{stats.total}</p>
             <p className="text-white/80 text-xs font-bold uppercase tracking-wider">
@@ -124,42 +165,46 @@ export default function DashboardPage() {
               </p>
             </div>
           </div>
-        </div>
+        </motion.div>
 
         {/* Password cards */}
         <div className="space-y-4 pb-8">
-          {loading ? (
-            <div className="flex justify-center py-12">
-              <div className="w-8 h-8 border-3 border-white/30 border-t-white rounded-full animate-spin" />
-            </div>
-          ) : filtered.length === 0 ? (
-            <div className="text-center py-12">
+          {filtered.length === 0 ? (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="text-center py-12"
+            >
               <p className="text-white/70 text-lg mb-4">
                 No passwords yet
               </p>
               <Link
                 href="/new-item"
-                className="inline-flex items-center gap-2 bg-white text-fk-blue px-6 py-3 rounded-full font-semibold"
+                className="inline-flex items-center gap-2 bg-white text-fk-blue px-6 py-3 rounded-full font-semibold hover:bg-white/90 transition-colors"
               >
                 <PlusCircle size={18} />
                 Add your first password
               </Link>
-            </div>
+            </motion.div>
           ) : (
-            filtered.map((item) => {
-              const loginData = item.item_type === "login" ? (item.data as LoginPayload) : null;
-              return (
-                <PasswordCard
-                  key={item.id}
-                  websiteName={item.name}
-                  email={loginData?.username ?? ""}
-                  tags={[item.item_type]}
-                  strength={getStrengthLabel(item.password_strength)}
-                  iconUrl={item.icon_url}
-                  onClick={() => router.push(`/item/${item.id}`)}
-                />
-              );
-            })
+            <StaggerContainer>
+              {filtered.map((item) => {
+                const loginData = item.item_type === "login" ? (item.data as LoginPayload) : null;
+                return (
+                  <StaggerItem key={item.id}>
+                    <PasswordCard
+                      websiteName={item.name}
+                      email={loginData?.username ?? ""}
+                      tags={[item.item_type]}
+                      strength={getStrengthLabel(item.password_strength)}
+                      iconUrl={item.icon_url}
+                      onClick={() => router.push(`/item/${item.id}`)}
+                      onCopy={() => handleCopyPassword(item)}
+                    />
+                  </StaggerItem>
+                );
+              })}
+            </StaggerContainer>
           )}
         </div>
       </div>

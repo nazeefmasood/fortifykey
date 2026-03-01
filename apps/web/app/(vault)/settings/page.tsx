@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useClerk } from "@clerk/nextjs";
+import { toast } from "sonner";
 import {
   Shield,
   Lock,
@@ -13,6 +14,8 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { useMasterKeyStore } from "../../../stores/master-key";
+import { useActivityLog } from "../../../stores/activity-log";
+import { ActivityLogSection } from "../../../components/settings/ActivityLog";
 
 const settingsSections = [
   {
@@ -66,16 +69,38 @@ export default function SettingsPage() {
   const router = useRouter();
   const { signOut } = useClerk();
   const lock = useMasterKeyStore((s) => s.lock);
+  const { log } = useActivityLog();
 
   const handleSignOut = async () => {
     lock();
+    log("vault_locked", "Signed out");
     await signOut();
     router.push("/login");
   };
 
   const handleLock = () => {
     lock();
+    log("vault_locked", "Vault locked manually");
+    toast.success("Vault locked");
     router.push("/lock");
+  };
+
+  const handleSettingClick = (action: string) => {
+    log("settings_changed", `Opened ${action} settings`);
+
+    switch (action) {
+      case "export":
+        toast.info("Export feature coming soon");
+        break;
+      case "change-master-password":
+        toast.info("Master password change coming soon");
+        break;
+      case "auto-lock":
+        toast.info("Auto-lock settings coming soon");
+        break;
+      default:
+        toast.info(`${action} settings coming soon`);
+    }
   };
 
   return (
@@ -94,6 +119,7 @@ export default function SettingsPage() {
               {section.items.map((item) => (
                 <button
                   key={item.label}
+                  onClick={() => handleSettingClick(item.action)}
                   className="flex items-center gap-4 w-full px-5 py-4 text-left hover:bg-gray-50 transition-colors first:rounded-t-2xl last:rounded-b-2xl"
                 >
                   <div className="w-10 h-10 bg-fk-blue/10 rounded-xl flex items-center justify-center shrink-0">
@@ -116,6 +142,14 @@ export default function SettingsPage() {
             </div>
           </div>
         ))}
+
+        {/* Activity Log */}
+        <div className="mb-8">
+          <h2 className="text-sm font-semibold text-fk-text-secondary uppercase tracking-wider mb-3 px-1">
+            Activity
+          </h2>
+          <ActivityLogSection />
+        </div>
 
         {/* Lock vault */}
         <button

@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useState, useEffect, useCallback } from "react";
 import {
   LayoutDashboard,
   FolderOpen,
@@ -14,7 +14,9 @@ import {
   Minus,
   Square,
   X,
+  Maximize2,
 } from "lucide-react";
+import { useMasterKeyStore } from "../../stores/master-key";
 
 const navItems = [
   { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
@@ -25,7 +27,76 @@ const navItems = [
 
 export function DesktopShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
   const [sidebarExpanded, setSidebarExpanded] = useState(false);
+  const [isMaximized, setIsMaximized] = useState(false);
+  const lock = useMasterKeyStore((s) => s.lock);
+
+  const desktop = typeof window !== "undefined" ? window.fortifykeyDesktop : null;
+  const isElectron = !!desktop;
+
+  // Window controls
+  const handleMinimize = useCallback(async () => {
+    if (desktop) {
+      await desktop.window.minimize();
+    }
+  }, [desktop]);
+
+  const handleMaximize = useCallback(async () => {
+    if (desktop) {
+      await desktop.window.maximize();
+      const maximized = await desktop.window.isMaximized();
+      setIsMaximized(maximized);
+    }
+  }, [desktop]);
+
+  const handleClose = useCallback(async () => {
+    if (desktop) {
+      await desktop.window.close();
+    }
+  }, [desktop]);
+
+  // Lock vault
+  const handleLock = useCallback(() => {
+    lock();
+    router.push("/lock");
+  }, [lock, router]);
+
+  // Setup Electron listeners
+  useEffect(() => {
+    if (!desktop) return;
+
+    // Listen for lock requests from main process
+    const unsubscribeLock = desktop.vault.onLockRequest(() => {
+      handleLock();
+    });
+
+    // Listen for password generation requests
+    const unsubscribeGenerate = desktop.password.onGenerateRequest(() => {
+      router.push("/generator");
+    });
+
+    return () => {
+      unsubscribeLock();
+      unsubscribeGenerate();
+    };
+  }, [desktop, handleLock, router]);
+
+  // Track activity for auto-lock
+  useEffect(() => {
+    if (!desktop) return;
+
+    const handleActivity = () => {
+      desktop.vault.notifyActivity();
+    };
+
+    const events = ["mousedown", "keydown", "scroll"];
+    events.forEach((event) => window.addEventListener(event, handleActivity));
+
+    return () => {
+      events.forEach((event) => window.removeEventListener(event, handleActivity));
+    };
+  }, [desktop]);
 
   return (
     <div className="flex flex-col h-[100dvh]">
@@ -44,13 +115,25 @@ export function DesktopShell({ children }: { children: React.ReactNode }) {
           className="flex items-center gap-1"
           style={{ WebkitAppRegion: "no-drag" } as React.CSSProperties}
         >
-          <button className="p-1.5 hover:bg-gray-200 rounded transition-colors">
+          <button
+            onClick={handleMinimize}
+            className="p-1.5 hover:bg-gray-200 rounded transition-colors"
+            title="Minimize"
+          >
             <Minus size={14} />
           </button>
-          <button className="p-1.5 hover:bg-gray-200 rounded transition-colors">
-            <Square size={12} />
+          <button
+            onClick={handleMaximize}
+            className="p-1.5 hover:bg-gray-200 rounded transition-colors"
+            title={isMaximized ? "Restore" : "Maximize"}
+          >
+            {isMaximized ? <Square size={12} /> : <Maximize2 size={12} />}
           </button>
-          <button className="p-1.5 hover:bg-red-500 hover:text-white rounded transition-colors">
+          <button
+            onClick={handleClose}
+            className="p-1.5 hover:bg-red-500 hover:text-white rounded transition-colors"
+            title="Close"
+          >
             <X size={14} />
           </button>
         </div>
@@ -103,6 +186,7 @@ export function DesktopShell({ children }: { children: React.ReactNode }) {
           {/* Lock */}
           <div className="px-2 pb-4 border-t border-gray-100 pt-4">
             <button
+              onClick={handleLock}
               className="flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-medium text-fk-text-secondary hover:bg-gray-100 w-full transition-colors"
               title="Lock Vault"
             >

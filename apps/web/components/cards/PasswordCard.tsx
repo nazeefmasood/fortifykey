@@ -1,6 +1,7 @@
 "use client";
 
-import { MoreHorizontal } from "lucide-react";
+import { MoreHorizontal, Copy, Eye, Trash2 } from "lucide-react";
+import { toast } from "sonner";
 import { StrengthBadge } from "../ui/StrengthBadge";
 import type { PasswordStrengthLabel } from "@fortifykey/shared";
 
@@ -11,6 +12,8 @@ interface PasswordCardProps {
   strength: PasswordStrengthLabel;
   iconUrl?: string | null;
   onClick?: () => void;
+  onCopy?: () => void;
+  onDelete?: () => void;
 }
 
 export function PasswordCard({
@@ -20,11 +23,27 @@ export function PasswordCard({
   strength,
   iconUrl,
   onClick,
+  onCopy,
+  onDelete,
 }: PasswordCardProps) {
+  const handleCopy = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onCopy) {
+      onCopy();
+    }
+  };
+
+  const handleDelete = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onDelete) {
+      onDelete();
+    }
+  };
+
   return (
     <div
       onClick={onClick}
-      className="bg-white rounded-[20px] p-5 shadow-md hover:shadow-lg transition-shadow cursor-pointer"
+      className="bg-white rounded-[20px] p-5 shadow-md hover:shadow-lg transition-all cursor-pointer group"
     >
       {/* Tags + menu */}
       <div className="flex items-center justify-between mb-4">
@@ -38,12 +57,32 @@ export function PasswordCard({
             </span>
           ))}
         </div>
-        <button
-          className="p-1 hover:bg-gray-100 rounded-full transition-colors"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <MoreHorizontal size={20} className="text-fk-text-secondary" />
-        </button>
+        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+          {onCopy && (
+            <button
+              className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+              onClick={handleCopy}
+              title="Copy password"
+            >
+              <Copy size={16} className="text-fk-text-secondary" />
+            </button>
+          )}
+          {onDelete && (
+            <button
+              className="p-2 hover:bg-red-50 rounded-full transition-colors"
+              onClick={handleDelete}
+              title="Delete"
+            >
+              <Trash2 size={16} className="text-red-500" />
+            </button>
+          )}
+          <button
+            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <MoreHorizontal size={16} className="text-fk-text-secondary" />
+          </button>
+        </div>
       </div>
 
       {/* Body */}

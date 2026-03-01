@@ -1,0 +1,155 @@
+/* Content Script Styles */
+
+.fortifykey-overlay {
+  position: absolute;
+  z-index: 2147483647;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.fortifykey-icon {
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  opacity: 0.8;
+  transition: opacity 0.2s;
+}
+
+.fortifykey-icon:hover {
+  opacity: 1;
+}
+
+.fortifykey-dropdown {
+  display: none;
+  position: absolute;
+  top: 30px;
+  right: 0;
+  min-width: 220px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+}
+
+.fortifykey-dropdown.fortifykey-visible {
+  display: block;
+}
+
+.fortifykey-dropdown-header {
+  padding: 10px 14px;
+  background: #628EFB;
+  color: white;
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.fortifykey-dropdown-items {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.fortifykey-item {
+  padding: 10px 14px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.fortifykey-item:hover {
+  background: #f0f4ff;
+}
+
+.fortifykey-item-name {
+  font-weight: 500;
+  color: #1a1a2e;
+  font-size: 14px;
+}
+
+.fortifykey-item-username {
+  font-size: 12px;
+  color: #666;
+  margin-top: 2px;
+}
+
+.fortifykey-empty {
+  padding: 16px 14px;
+  text-align: center;
+  color: #888;
+  font-size: 13px;
+}
+
+/* Save Prompt */
+#fortifykey-save-prompt {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 2147483647;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  animation: fortifykey-slide-up 0.3s ease;
+}
+
+@keyframes fortifykey-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fortifykey-save-content {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+  padding: 16px 20px;
+  min-width: 280px;
+}
+
+.fortifykey-save-title {
+  font-weight: 600;
+  font-size: 15px;
+  color: #1a1a2e;
+  margin-bottom: 4px;
+}
+
+.fortifykey-save-subtitle {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 14px;
+}
+
+.fortifykey-save-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.fortifykey-save-buttons button {
+  flex: 1;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 13px;
+  cursor: pointer;
+  border: none;
+  transition: background 0.15s;
+}
+
+.fortifykey-save-no {
+  background: #f0f0f0;
+  color: #666;
+}
+
+.fortifykey-save-no:hover {
+  background: #e0e0e0;
+}
+
+.fortifykey-save-yes {
+  background: #628EFB;
+  color: white;
+}
+
+.fortifykey-save-yes:hover {
+  background: #4a6ff7;
+}

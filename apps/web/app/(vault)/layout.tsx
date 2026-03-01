@@ -5,6 +5,7 @@ import { WebShell } from "../../components/shells/WebShell";
 import { DesktopShell } from "../../components/shells/DesktopShell";
 import { PwaShell } from "../../components/shells/PwaShell";
 import { VaultProvider } from "../../components/providers/VaultProvider";
+import { AutoLockIndicator } from "../../components/ui/AutoLockIndicator";
 
 const shells = {
   web: WebShell,
@@ -23,6 +24,7 @@ export default function VaultLayout({
   return (
     <VaultProvider>
       <Shell>{children}</Shell>
+      <AutoLockIndicator />
     </VaultProvider>
   );
 }

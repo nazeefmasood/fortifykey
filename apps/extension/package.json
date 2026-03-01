@@ -1,0 +1,22 @@
+{
+  "name": "@fortifykey/extension",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "vite build --watch --mode development",
+    "build": "vite build && npm run copy-manifest && npm run copy-html",
+    "build:prod": "vite build --mode production && npm run copy-manifest && npm run copy-html",
+    "copy-manifest": "cp manifest.json dist/",
+    "copy-html": "cp src/popup/index.html dist/popup.html && cp src/content/styles.css dist/content.css",
+    "type-check": "tsc --noEmit",
+    "package": "npm run build && cd dist && zip -r ../fortifykey-extension.zip ."
+  },
+  "dependencies": {
+    "@fortifykey/shared": "*"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.287",
+    "typescript": "^5.9.2",
+    "vite": "^6.3.5"
+  }
+}

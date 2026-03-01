@@ -3,9 +3,11 @@
 import { useState, useCallback, useRef } from "react";
 import { ArrowLeft, RotateCw, ArrowRight } from "lucide-react";
 import Link from "next/link";
+import { toast } from "sonner";
 import { generatePassword, DEFAULT_GENERATOR_CONFIG } from "@fortifykey/shared";
 import { PasswordText } from "../../../components/ui/PasswordText";
 import { RadialSlider } from "../../../components/ui/RadialSlider";
+import { useActivityLog } from "../../../stores/activity-log";
 
 export default function GeneratorPage() {
   const [config, setConfig] = useState({
@@ -17,20 +19,31 @@ export default function GeneratorPage() {
 
   const [password, setPassword] = useState(() => generatePassword(config));
   const scrollRef = useRef<HTMLDivElement>(null);
+  const { log } = useActivityLog();
 
   const regenerate = useCallback(() => {
-    setPassword(generatePassword(config));
-  }, [config]);
+    const newPassword = generatePassword(config);
+    setPassword(newPassword);
+    log("password_generated", `Generated ${config.length} character password`);
+  }, [config, log]);
+
+  const handleCopy = useCallback(async () => {
+    await navigator.clipboard.writeText(password);
+    toast.success("Password copied to clipboard");
+    log("item_copied", "Copied generated password");
+  }, [password, log]);
 
   const updateConfig = useCallback(
     (key: keyof typeof config, value: number) => {
       setConfig((prev) => {
         const next = { ...prev, [key]: value };
-        setPassword(generatePassword(next));
+        const newPassword = generatePassword(next);
+        setPassword(newPassword);
+        log("password_generated", `Generated ${next.length} character password`);
         return next;
       });
     },
-    []
+    [log]
   );
 
   return (
