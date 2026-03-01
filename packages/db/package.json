@@ -1,0 +1,22 @@
+{
+  "name": "@fortifykey/db",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "check-types": "tsc --noEmit",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "@fortifykey/shared": "*",
+    "@supabase/supabase-js": "^2.49.1",
+    "dexie": "^4.0.11",
+    "dexie-react-hooks": "^1.1.7"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "*",
+    "typescript": "5.9.2"
+  }
+}

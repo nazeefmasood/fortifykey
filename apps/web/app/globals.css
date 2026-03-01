@@ -1,50 +1,106 @@
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@import "tailwindcss";
+
+/* ===== FortifyKey Theme ===== */
+@theme {
+  /* Primary screen backgrounds */
+  --color-fk-blue: #628EFB;
+  --color-fk-blue-dark: #5981e1;
+  --color-fk-blue-form: #3a86ff;
+  --color-fk-red: #DD4848;
+  --color-fk-red-accent: #eb264F;
+  --color-fk-red-light: #Ed7470;
+  --color-fk-green: #4aa14e;
+  --color-fk-green-dark: #429146;
+  --color-fk-green-card: #71bd81;
+
+  /* Strength indicators */
+  --color-strength-strong: #4CAF50;
+  --color-strength-medium: #FFA000;
+  --color-strength-weak: #F44336;
+
+  /* UI colors */
+  --color-fk-orange: #FF9F1C;
+  --color-fk-gold: #ffd700;
+  --color-fk-delete: #FF6B6B;
+  --color-fk-tag-bg: #EDF4FF;
+  --color-fk-tag-text: #538dfb;
+  --color-fk-logo-bg: #FFE4E4;
+
+  /* OAuth button colors */
+  --color-oauth-google: #DB4437;
+  --color-oauth-facebook: #4267B2;
+  --color-oauth-apple: #000000;
+
+  /* Text colors */
+  --color-fk-text-primary: #2D3748;
+  --color-fk-text-secondary: #718096;
+  --color-fk-text-muted: #888888;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ===== Glassmorphism Utilities ===== */
+.glass {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
+.glass-dark {
+  background: rgba(39, 40, 41, 0.37);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(39, 40, 41, 0.37);
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
+.glass-card {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
+/* ===== Base Styles ===== */
 * {
   box-sizing: border-box;
   padding: 0;
   margin: 0;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+html,
+body {
+  overflow-x: hidden;
 }
 
-.imgDark {
-  display: none;
+body {
+  font-family: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
 
-  .imgLight {
-    display: none;
-  }
-  .imgDark {
-    display: unset;
-  }
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* PWA safe area */
+.safe-area-pb {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.safe-area-pt {
+  padding-top: env(safe-area-inset-top, 0px);
 }
